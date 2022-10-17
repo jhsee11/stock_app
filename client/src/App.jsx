@@ -15,7 +15,7 @@ const App = () => {
   const { activeMenu } = useStateContext();
 
   return (
-    <div className="text-red-300 w-full">
+    <div className="text-slate-500 w-full">
       <BrowserRouter>
         <div className="flex relative bg-blue-100">
           <div className="fixed right-4 bottom-4" style={{ zIndex: '1000' }}>
@@ -39,10 +39,10 @@ const App = () => {
                 : 'bg-green-bg  w-full min-h-screen flex-2 '
             }
           >
-            <div className="fixed md:static bg-blue-100 navbar w-full ">
+            <div className="fixed bg-blue-100 navbar w-full z-10">
               <Navbar />
             </div>
-            <div className="flex justify-center items-center">
+            <div className="flex mt-20 justify-center items-center">
               <Routes>
                 {/*Dashboard */}
                 <Route path="/" element={<StockPrice />} />
