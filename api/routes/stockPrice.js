@@ -4,6 +4,7 @@ const Company_StatsVals = require('../models/Compnay_StatsVals');
 const Company_QuoteTables = require('../models/Company_QuoteTables');
 const Company_IncomeStatements = require('../models/Company_IncomeStatements');
 const Company_BalanceSheets = require('../models/Company_BalanceSheets');
+const Company_CashFlowStatements = require('../models/Company_CashFlows');
 
 //GET Target Stock
 router.post('/ticker', async (req, res) => {
@@ -87,6 +88,22 @@ router.get('/balance_sheet/:ticker', async (req, res) => {
     const targetTicker = req.params.ticker;
     console.log('retrieve balance sheets');
     const tickerQuotes = await Company_BalanceSheets.find({
+      ticker: targetTicker,
+    });
+    console.log(tickerQuotes);
+    res.status(200).json(tickerQuotes);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
+
+//GET Cash Flows
+router.get('/cashflow_statement/:ticker', async (req, res) => {
+  try {
+    const targetTicker = req.params.ticker;
+    console.log('retrieve cash flow statements');
+    const tickerQuotes = await Company_CashFlowStatements.find({
       ticker: targetTicker,
     });
     console.log(tickerQuotes);
