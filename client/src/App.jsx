@@ -17,32 +17,31 @@ const App = () => {
   return (
     <div className="text-slate-500 w-full">
       <BrowserRouter>
-        <div className="flex relative bg-blue-100">
+        <div className="flex relative bg-green-2">
           <div className="fixed right-4 bottom-4" style={{ zIndex: '1000' }}>
             <FiSettings />
           </div>
 
           {activeMenu ? (
-            <div className="w-72 fixed sidebar bg-red-100 ">
+            <div className="w-72 fixed sidebar bg-green-2 h-full ">
               <Sidebar />
             </div>
           ) : (
-            <div className="w-0">
-              <p>gogo</p>
+            <div className="w-0 bg-green-1">
               <Sidebar />
             </div>
           )}
           <div
             className={
               activeMenu
-                ? 'bg-yellow-100 min-h-screen md:ml-72 w-full  '
-                : 'bg-green-bg  w-full min-h-screen flex-2 '
+                ? 'bg-yellow-2 w-full h-screen md:ml-72 '
+                : 'bg-yellow-2  w-full h-full flex-2 '
             }
           >
-            <div className="fixed bg-blue-100 navbar w-full z-10">
+            <div className="fixed bg-green-1 navbar w-full z-100">
               <Navbar />
             </div>
-            <div className="flex mt-20 justify-center items-center">
+            <div className="flex mt-28 justify-center items-center bg-yellow-2">
               <Routes>
                 {/*Dashboard */}
                 <Route path="/" element={<StockPrice />} />

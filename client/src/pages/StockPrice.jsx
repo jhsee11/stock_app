@@ -19,6 +19,8 @@ const StockPrice = () => {
   const [balanceSheets, setBalanceSheets] = useState([]);
   const [cashflowStatements, setCashflowStatements] = useState([]);
   const [openTab, setOpenTab] = useState(1);
+  const [showStats, setShowStats] = useState(false);
+  const [showQuotes, setShowQuotes] = useState(false);
 
   const [stock, setStock] = useState({
     ticker: '',
@@ -91,6 +93,7 @@ const StockPrice = () => {
         console.log('stats val for stocks');
         console.log(res.data);
         setStatsVal(res.data);
+        setShowStats(true);
       });
 
     /* get stocks quotes */
@@ -100,6 +103,7 @@ const StockPrice = () => {
         console.log('quotes for stocks');
         console.log(res.data);
         setQuotes(res.data[0]);
+        setShowQuotes(true);
       });
 
     /* get income statement */
@@ -159,12 +163,12 @@ const StockPrice = () => {
 
   return (
     <div className="w-[80%]">
-      <div className="w-full flex">
+      <div className="w-full md:flex ">
         <form
           onSubmit={handleSubmit}
-          className="mt-8 bg-green-200 shadow-md rounded px-6 py-3 w-36 h-max"
+          className="mx-auto mb-8 flex items-center md:m-4 md:block md:w-40 w-[600px] mt-8 bg-green-2 shadow-md rounded px-4 py-3 h-max"
         >
-          <div>
+          <div className="ml-4">
             <select name="ticker" onChange={handleChange}>
               {options.map((ticker) => (
                 <option key={ticker} value={ticker}>
@@ -174,11 +178,11 @@ const StockPrice = () => {
             </select>
           </div>
 
-          <label className="mt-4 block text-black text-sm font-bold mb-1">
+          <label className="ml-4 md:mt-4 block text-gray-200 text-sm font-bold mb-1">
             StartDate
           </label>
           <DatePicker
-            className="text-center  w-24 rounded py-1 px-1 mb-2 text-black"
+            className="ml-4 text-center w-24 rounded py-1 px-1 mb-2 text-black"
             selected={stock.startDate}
             name="date"
             onChange={(newDate) => {
@@ -186,11 +190,11 @@ const StockPrice = () => {
             }}
           />
 
-          <label className="mt-2 block text-black text-sm font-bold mb-1">
+          <label className="ml-4 md:mt-2 block text-gray-200 text-sm font-bold mb-1">
             EndDate
           </label>
           <DatePicker
-            className="text-center  w-24 rounded py-1 px-1 mb-2 text-black"
+            className="ml-4 text-center w-24 rounded py-1 px-1 mb-2 text-black"
             selected={stock.endDate}
             name="date"
             onChange={(newDate) => {
@@ -198,50 +202,63 @@ const StockPrice = () => {
             }}
           />
           <button
-            className="mt-2 w-24 text-black bg-yellow-200 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+            className="ml-4 md:mt-4 w-24 text-black bg-yellow-2 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
             type="submit"
           >
             Submit
           </button>
         </form>
 
-        <div className="ml-20">
+        <div className="md:ml-40">
           {/*<BarChart chartData={userData} />
              <LineChart chartData={userData} />*/}
           <LineChart chartData={targetStock} />
-          <div className="mt-8 ml-4 flex">
+          <div className="mt-8 ml-4 md:flex">
             <div className="w-72">
-              <h1 className="text-blue-800 text-xl mb-2">Stats</h1>
-              <div className="grid grid-rows-9 grid-flow-col gap-2 border-2 border-gray-500">
-                {statsVal.map((stats) => (
-                  <div className="px-2 py-1">
-                    <li key={stats.Attribute} value={stats.Recent}>
-                      {stats.Attribute} - {stats.Recent}
-                    </li>
-                    <hr />
-                  </div>
-                ))}
-              </div>
+              <h1 className="text-green-1 text-xl mb-2 underline underline-offset-4">
+                Stats
+              </h1>
+              {showStats && (
+                <div className="grid grid-rows-9 grid-flow-col gap-2 outline-offset-6 border-gray-500">
+                  {statsVal.map((stats) => (
+                    <div className="py-1">
+                      <li
+                        className="text-sm md:text-md"
+                        key={stats.Attribute}
+                        value={stats.Recent}
+                      >
+                        {stats.Attribute} - {stats.Recent}
+                      </li>
+                      <hr />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <div className="ml-16">
-              <h1 className="text-blue-800 text-xl mb-2">Quotes</h1>
-              <div className="grid grid-rows-9 grid-flow-col gap-2 border-2 border-gray-500">
-                {Object.keys(quotes)
-                  .filter((key) => key != 'ticker' && key != '_id')
-                  .map((key) => {
-                    return (
-                      <div className="px-2 py-1" key={key}>
-                        <li key={key}>
-                          {key}: {quotes[key]}
-                        </li>
-                        <hr />
-                      </div>
-                    );
-                  })}
-              </div>
+
+            <div className="mt-10 md:mt-0 md:ml-16">
+              <h1 className="text-green-1 text-xl mb-2 underline underline-offset-4">
+                Quotes
+              </h1>
+              {showQuotes && (
+                <div className="grid grid-rows-20 md:grid-rows-9 grid-flow-col gap-2 border-gray-500">
+                  {Object.keys(quotes)
+                    .filter((key) => key != 'ticker' && key != '_id')
+                    .map((key) => {
+                      return (
+                        <div className="py-1" key={key}>
+                          <li className="text-sm md:text-md" key={key}>
+                            {key}: {quotes[key]}
+                          </li>
+                          <hr />
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
             </div>
           </div>
-          <div>
+          <div className="mt-16 mb-32 ">
             <StockInfoTab
               incomeStatements={incomeStatements}
               balanceSheets={balanceSheets}

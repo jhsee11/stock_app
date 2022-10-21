@@ -26,14 +26,19 @@ module.exports = withMT({
         8: 'repeat(8, minmax(0, 1fr))',
         9: 'repeat(9, minmax(0, 1fr))',
         10: 'repeat(10, minmax(0, 1fr))',
+        20: 'repeat(20, minmax(0, 1fr))',
 
         // Complex site-specific row configuration
         layout: '200px minmax(900px, 1fr) 100px',
       },
       colors: {
         primary: '#00040F',
-        secondary: '#00f6ff',
+        two: '#00f6ff',
         dimWhite: 'rgba(255, 255, 255, 0.7)',
+        'green-1': '#395144',
+        'green-2': '#4E6C50',
+        'yellow-1': '#AA8B56',
+        'yellow-2': '#F0EBCE',
       },
       fontFamily: {
         poppings: ['Poppins', 'sans-serif'],

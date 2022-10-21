@@ -10,12 +10,12 @@ import { links } from '../data/dummy';
 
 const Sidebar = () => {
   const activeLink =
-    'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-white-100 text-md m-2';
+    'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-green-1 text-md m-2';
 
   const normalLink =
-    'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-gray-700 text-md dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2';
+    'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-yellow-2 text-md dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2';
 
-  const { activeMenu, setActiveMenu } = useStateContext();
+  const { activeMenu, setActiveMenu, screenSize } = useStateContext();
 
   const handleCloseSideBar = () => {
     if (activeMenu && screenSize <= 900) {
@@ -31,10 +31,10 @@ const Sidebar = () => {
             <Link
               to="/"
               onClick={handleCloseSideBar}
-              className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight dark:text-white text-slate-900"
+              className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900"
             >
               <SiShopware />
-              <span>Shoppy</span>
+              <span>Stock Analysis App</span>
             </Link>
 
             <button
@@ -50,14 +50,14 @@ const Sidebar = () => {
           <div className="mt-10">
             {links.map((item) => (
               <div key={item.title}>
-                <p className="text-gray-400 m-3 mt-4 uppercase">{item.title}</p>
+                <p className="text-white m-3 mt-4 uppercase">{item.title}</p>
 
                 {item.links.map((link) => (
                   <NavLink
                     to={`/${link.name}`}
                     key={link.name}
                     style={({ isActive }) => ({
-                      backgroundColor: isActive ? 'yellow' : '',
+                      backgroundColor: isActive ? '#F0EBCE' : '',
                     })}
                     className={({ isActive }) =>
                       isActive ? activeLink : normalLink

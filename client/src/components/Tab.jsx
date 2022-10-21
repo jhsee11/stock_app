@@ -17,16 +17,16 @@ const StockInfoTab = ({
   cashflowStatements,
 }) => {
   return (
-    <div className="mt-10">
+    <div className="mt-10 z-10 ">
       <Tabs value="react">
-        <TabsHeader indicatorProps={{ className: 'bg-yellow-300' }}>
-          <Tab className="bg-red-300" key={1} value={1}>
+        <TabsHeader indicatorProps={{ className: 'bg-green-2' }}>
+          <Tab className="bg-yellow-1 text-white" key={1} value={1}>
             Income Statement
           </Tab>
-          <Tab className="bg-green-100" key={2} value={2}>
-            Balance Sheettab
+          <Tab className="bg-yellow-1 text-white" key={2} value={2}>
+            Balance Sheet
           </Tab>
-          <Tab className="bg-blue-100" key={3} value={3}>
+          <Tab className="bg-yellow-1 text-white" key={3} value={3}>
             Cash Flow Statement
           </Tab>
         </TabsHeader>
@@ -219,7 +219,7 @@ const StockInfoTab = ({
             </div>
           </TabPanel>
           <TabPanel key={3} value={3}>
-            Cash Flow Statement
+            CashFlow Statement
             <div className="flex">
               {cashflowStatements.map((cashflowStatement, index) => {
                 console.log(`hahah index is ${index}`);
