@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const Company_OHLC = require('../models/Company_OHLC');
-const Company_StatsVals = require('../models/Compnay_StatsVals');
+const Company_StatsVals = require('../models/Company_StatsVals');
 const Company_QuoteTables = require('../models/Company_QuoteTables');
 const Company_IncomeStatements = require('../models/Company_IncomeStatements');
 const Company_BalanceSheets = require('../models/Company_BalanceSheets');

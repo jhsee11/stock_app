@@ -29,8 +29,9 @@ module.exports = withMT({
         20: 'repeat(20, minmax(0, 1fr))',
 
         // Complex site-specific row configuration
-        layout: '200px minmax(900px, 1fr) 100px',
+        layout: '200px minmax(900px, 1fr) 200px',
       },
+
       colors: {
         primary: '#00040F',
         two: '#00f6ff',
@@ -49,7 +50,7 @@ module.exports = withMT({
       ss: '620px',
       sm: '768px',
       md: '1060px',
-      lg: '1200px',
+      lg: '1300px',
       xl: '1700px',
     },
   },

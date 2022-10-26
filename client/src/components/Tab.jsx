@@ -17,16 +17,28 @@ const StockInfoTab = ({
   cashflowStatements,
 }) => {
   return (
-    <div className="mt-10 z-10 ">
-      <Tabs value="react">
+    <div className="mt-10">
+      <Tabs value="react" className="overflow-auto z-0">
         <TabsHeader indicatorProps={{ className: 'bg-green-2' }}>
-          <Tab className="bg-yellow-1 text-white" key={1} value={1}>
+          <Tab
+            className="bg-yellow-1 text-white font-bold border text-clip whitespace-nowrap"
+            key={1}
+            value={1}
+          >
             Income Statement
           </Tab>
-          <Tab className="bg-yellow-1 text-white" key={2} value={2}>
+          <Tab
+            className="bg-yellow-1 text-white font-bold border text-clip  whitespace-nowrap"
+            key={2}
+            value={2}
+          >
             Balance Sheet
           </Tab>
-          <Tab className="bg-yellow-1 text-white" key={3} value={3}>
+          <Tab
+            className="bg-yellow-1 text-white font-bold border text-clip whitespace-nowrap"
+            key={3}
+            value={3}
+          >
             Cash Flow Statement
           </Tab>
         </TabsHeader>
@@ -35,7 +47,7 @@ const StockInfoTab = ({
             <div>
               <div>
                 <h2>Income Statement</h2>
-                <div className="flex">
+                <div className="flex  overflow-auto">
                   {incomeStatements.map((income, index) => {
                     console.log(`hahah index is ${index}`);
                     let display = false;
@@ -93,12 +105,12 @@ const StockInfoTab = ({
                                     {display && (
                                       <>
                                         {header && (
-                                          <th className="border border-green-600 p-2">
+                                          <th className="border border-green-600 p-2 whitespace-nowrap font-semibold text-center">
                                             {incomeElement}
                                           </th>
                                         )}
                                         {!header && (
-                                          <td className="border border-green-600">
+                                          <td className="border border-green-600 whitespace-nowrap font-semibold text-center">
                                             {incomeElement}
                                           </td>
                                         )}
@@ -106,12 +118,12 @@ const StockInfoTab = ({
                                     )}
 
                                     {header && (
-                                      <th className="border border-green-600 p-2">
+                                      <th className="border border-green-600 p-2 whitespace-nowrap">
                                         {income[incomeElement] || 'NA'}
                                       </th>
                                     )}
                                     {!header && (
-                                      <td className="border border-green-600">
+                                      <td className="border border-green-600 whitespace-nowrap">
                                         {income[incomeElement] || 'NA'}
                                       </td>
                                     )}
@@ -131,7 +143,7 @@ const StockInfoTab = ({
           </TabPanel>
           <TabPanel key={2} value={2}>
             Balance Sheet
-            <div className="flex">
+            <div className="flex overflow-auto">
               {balanceSheets.map((balanceSheet, index) => {
                 console.log(`hahah index is ${index}`);
                 let display = false;
@@ -186,24 +198,24 @@ const StockInfoTab = ({
                                 {display && (
                                   <>
                                     {header && (
-                                      <th className="border border-green-600 p-2">
+                                      <th className="border border-green-600 p-2 whitespace-nowrap font-semibold text-center">
                                         {balanceSheetElement}
                                       </th>
                                     )}
                                     {!header && (
-                                      <td className="border border-green-600">
+                                      <td className="border border-green-600 whitespace-nowrap font-semibold text-center">
                                         {balanceSheetElement}
                                       </td>
                                     )}
                                   </>
                                 )}
                                 {header && (
-                                  <th className="border border-green-600 p-2">
+                                  <th className="border border-green-600 p-2 whitespace-nowrap">
                                     {balanceSheet[balanceSheetElement] || 'NA'}
                                   </th>
                                 )}
                                 {!header && (
-                                  <td className="border border-green-600">
+                                  <td className="border border-green-600 whitespace-nowrap">
                                     {balanceSheet[balanceSheetElement] || 'NA'}
                                   </td>
                                 )}
@@ -220,7 +232,7 @@ const StockInfoTab = ({
           </TabPanel>
           <TabPanel key={3} value={3}>
             CashFlow Statement
-            <div className="flex">
+            <div className="flex overflow-auto">
               {cashflowStatements.map((cashflowStatement, index) => {
                 console.log(`hahah index is ${index}`);
                 let display = false;
@@ -233,7 +245,9 @@ const StockInfoTab = ({
                     <table className="table-fixed border-separate  border-green-900">
                       <thead>
                         <tr>
-                          {display && <th className="w-80"></th>}
+                          {display && (
+                            <th className="w-80 whitespace-nowrap"></th>
+                          )}
                           {Object.keys(cashflowStatement)
                             .filter((key) => key != 'ticker' && key != '_id')
                             .map((cashflowElement, index_1) => {
@@ -275,24 +289,24 @@ const StockInfoTab = ({
                                 {display && (
                                   <>
                                     {header && (
-                                      <th className="border border-green-600 p-2">
+                                      <th className="border border-green-600 p-2 whitespace-nowrap font-semibold text-center">
                                         {cashflowElement}
                                       </th>
                                     )}
                                     {!header && (
-                                      <td className="border border-green-600">
+                                      <td className="border border-green-600 whitespace-nowrap font-semibold text-center">
                                         {cashflowElement}
                                       </td>
                                     )}
                                   </>
                                 )}
                                 {header && (
-                                  <th className="border border-green-600 p-2">
+                                  <th className="border border-green-600 p-2 whitespace-nowrap">
                                     {cashflowStatement[cashflowElement] || 'NA'}
                                   </th>
                                 )}
                                 {!header && (
-                                  <td className="border border-green-600">
+                                  <td className="border border-green-600 whitespace-nowrap">
                                     {cashflowStatement[cashflowElement] || 'NA'}
                                   </td>
                                 )}

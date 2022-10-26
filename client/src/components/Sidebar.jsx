@@ -24,7 +24,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div>
+    <div className="z-10">
       {activeMenu && (
         <>
           <div className="flex justify-between items-center">
@@ -47,7 +47,7 @@ const Sidebar = () => {
               <MdOutlineCancel />
             </button>
           </div>
-          <div className="mt-10">
+          <div className="mt-10 z-10">
             {links.map((item) => (
               <div key={item.title}>
                 <p className="text-white m-3 mt-4 uppercase">{item.title}</p>

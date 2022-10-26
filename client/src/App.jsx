@@ -23,7 +23,7 @@ const App = () => {
           </div>
 
           {activeMenu ? (
-            <div className="w-72 fixed sidebar bg-green-2 h-full ">
+            <div className="w-72 fixed sidebar bg-green-2 h-full z-[1]">
               <Sidebar />
             </div>
           ) : (
@@ -34,14 +34,14 @@ const App = () => {
           <div
             className={
               activeMenu
-                ? 'bg-yellow-2 w-full h-screen md:ml-72 '
-                : 'bg-yellow-2  w-full h-full flex-2 '
+                ? 'bg-yellow-2 w-screen h-screen md:ml-72 overflow-auto '
+                : 'bg-yellow-2  w-screen h-screen flex-2 overflow-auto '
             }
           >
-            <div className="fixed bg-green-1 navbar w-full z-100">
+            <div className="fixed bg-green-1 navbar w-full z-50">
               <Navbar />
             </div>
-            <div className="flex mt-28 justify-center items-center bg-yellow-2">
+            <div className="flex mt-28 justify-center items-center bg-yellow-2 w-full">
               <Routes>
                 {/*Dashboard */}
                 <Route path="/" element={<StockPrice />} />

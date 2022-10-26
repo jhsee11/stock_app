@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 var bodyParser = require('body-parser');
 const stocksPriceRoute = require('./routes/stockPrice');
+const stocksAnalysisRoute = require('./routes/stockAnalysis');
 
 const port = 5001;
 
@@ -31,6 +32,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/stock_price', stocksPriceRoute);
+app.use('/api/stock_analysis', stocksAnalysisRoute);
 
 app.get('/', (req, res) => {
   res.send('Hello World, from express');

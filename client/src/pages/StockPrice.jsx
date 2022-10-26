@@ -8,6 +8,7 @@ import moment from 'moment';
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import '../react_datepicker.css';
 import StockInfoTab from '../components/Tab';
 
 const StockPrice = () => {
@@ -162,11 +163,11 @@ const StockPrice = () => {
   });
 
   return (
-    <div className="w-[80%]">
+    <div className="w-full ml-20 mx-auto overflow-auto md:overflow-auto">
       <div className="w-full md:flex ">
         <form
           onSubmit={handleSubmit}
-          className="mx-auto mb-8 flex items-center md:m-4 md:block md:w-40 w-[600px] mt-8 bg-green-2 shadow-md rounded px-4 py-3 h-max"
+          className="ml-4 mb-8 mt-8 md:ml-16 flex items-center md:block md:w-40 w-[600px]  bg-green-2 shadow-md rounded px-4 py-3 h-max "
         >
           <div className="ml-4">
             <select name="ticker" onChange={handleChange}>
@@ -182,72 +183,98 @@ const StockPrice = () => {
             StartDate
           </label>
           <DatePicker
-            className="ml-4 text-center w-24 rounded py-1 px-1 mb-2 text-black"
+            portalId="root-portal"
+            popperClassName="date-picker-reports"
+            className="ml-4 md:ml-2 text-center w-24 rounded py-1 px-1 mb-2 text-black z-0"
+            dateFormatCalendar="yyyy"
             selected={stock.startDate}
             name="date"
             onChange={(newDate) => {
               setStock({ ...stock, startDate: newDate });
             }}
+            peekNextMonth
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
           />
 
           <label className="ml-4 md:mt-2 block text-gray-200 text-sm font-bold mb-1">
             EndDate
           </label>
+          <div></div>
+
           <DatePicker
-            className="ml-4 text-center w-24 rounded py-1 px-1 mb-2 text-black"
+            style={{ 'z-index': -100 }}
+            className="ml-4 md:ml-2 text-center w-24 rounded py-1 px-1 mb-2 text-black z-0"
             selected={stock.endDate}
             name="date"
             onChange={(newDate) => {
               setStock({ ...stock, endDate: newDate });
             }}
+            peekNextMonth
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
           />
           <button
-            className="ml-4 md:mt-4 w-24 text-black bg-yellow-2 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+            className="ml-4 md:mt-4 md:ml-2 w-24 text-black bg-yellow-2 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
             type="submit"
           >
             Submit
           </button>
         </form>
 
-        <div className="md:ml-40">
+        <div className="container md:overflow-auto md:ml-12 md:mr-20">
           {/*<BarChart chartData={userData} />
              <LineChart chartData={userData} />*/}
           <LineChart chartData={targetStock} />
-          <div className="mt-8 ml-4 md:flex">
+          <div className="mt-8 ml-4 md:flex md:overflow-auto">
             <div className="w-72">
               <h1 className="text-green-1 text-xl mb-2 underline underline-offset-4">
                 Stats
               </h1>
               {showStats && (
-                <div className="grid grid-rows-9 grid-flow-col gap-2 outline-offset-6 border-gray-500">
-                  {statsVal.map((stats) => (
-                    <div className="py-1">
-                      <li
-                        className="text-sm md:text-md"
-                        key={stats.Attribute}
-                        value={stats.Recent}
-                      >
-                        {stats.Attribute} - {stats.Recent}
-                      </li>
-                      <hr />
-                    </div>
-                  ))}
+                <div>
+                  {statsVal.map((stats) => {
+                    return (
+                      <div className="grid grid-rows-9 grid-flow-row gap-2 border-gray-500">
+                        {Object.keys(stats)
+                          .filter((key) => key != 'ticker' && key != '_id')
+                          .map((key) => {
+                            return (
+                              <div className="py-1">
+                                <li
+                                  className="text-sm md:text-md whitespace-nowrap "
+                                  key={key}
+                                  value={stats.Recent}
+                                >
+                                  {key} - {stats[key]}
+                                </li>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
-            <div className="mt-10 md:mt-0 md:ml-16">
+            <div className="mt-8 md:mt-0 md:ml-16">
               <h1 className="text-green-1 text-xl mb-2 underline underline-offset-4">
                 Quotes
               </h1>
               {showQuotes && (
-                <div className="grid grid-rows-20 md:grid-rows-9 grid-flow-col gap-2 border-gray-500">
+                <div className="grid grid-rows-20 md:grid-rows-9 grid-flow-col gap-2 border-gray-500 ">
                   {Object.keys(quotes)
                     .filter((key) => key != 'ticker' && key != '_id')
                     .map((key) => {
                       return (
                         <div className="py-1" key={key}>
-                          <li className="text-sm md:text-md" key={key}>
+                          <li
+                            className="text-sm md:text-md whitespace-nowrap "
+                            key={key}
+                          >
                             {key}: {quotes[key]}
                           </li>
                           <hr />

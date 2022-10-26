@@ -37,7 +37,7 @@ const Navbar = () => {
   );
 
   return (
-    <div className="flex justify-between p-2 md:mx-6 relativ bg-green-1">
+    <div className="flex justify-between p-2 md:mx-6 relative bg-green-1 z-[50]">
       <div className="text-yellow-2">
         <NavButton
           customFunc={() =>
