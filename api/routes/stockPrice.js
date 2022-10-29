@@ -38,7 +38,7 @@ router.post('/ticker', async (req, res) => {
 router.get('/statsvals/:ticker', async (req, res) => {
   try {
     const targetTicker = req.params.ticker;
-    console.log('retrieve stocks stats vals');
+    console.log('retrieve stocks stats vals ');
     const tickerStatsVals = await Company_StatsVals.find({
       ticker: targetTicker,
     });

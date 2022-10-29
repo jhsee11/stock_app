@@ -163,11 +163,11 @@ const StockPrice = () => {
   });
 
   return (
-    <div className="w-full ml-20 mx-auto overflow-auto md:overflow-auto">
+    <div className="w-full ml-10 mr-10 mx-auto overflow-auto md:overflow-auto">
       <div className="w-full md:flex ">
         <form
           onSubmit={handleSubmit}
-          className="ml-4 mb-8 mt-8 md:ml-16 flex items-center md:block md:w-40 w-[600px]  bg-green-2 shadow-md rounded px-4 py-3 h-max "
+          className="mb-8 mt-8 md:ml-8 flex items-center md:block md:w-40 w-[600px]  bg-green-2 shadow-md rounded px-4 py-3 h-max "
         >
           <div className="ml-4">
             <select name="ticker" onChange={handleChange}>
@@ -224,7 +224,9 @@ const StockPrice = () => {
           </button>
         </form>
 
-        <div className="container md:overflow-auto md:ml-12 md:mr-20">
+        {/*}
+        <div className=" md:overflow-auto md:ml-12 md:mr-20"> */}
+        <div className="md:ml-12 md:mr-20">
           {/*<BarChart chartData={userData} />
              <LineChart chartData={userData} />*/}
           <LineChart chartData={targetStock} />
@@ -265,14 +267,14 @@ const StockPrice = () => {
                 Quotes
               </h1>
               {showQuotes && (
-                <div className="grid grid-rows-20 md:grid-rows-9 grid-flow-col gap-2 border-gray-500 ">
+                <div className="grid grid-rows-20 md:grid-rows-9 grid-flow-col gap-x-8 gap-2 border-gray-500 ">
                   {Object.keys(quotes)
                     .filter((key) => key != 'ticker' && key != '_id')
                     .map((key) => {
                       return (
                         <div className="py-1" key={key}>
                           <li
-                            className="text-sm md:text-md whitespace-nowrap "
+                            className="text-sm md:text-md whitespace-nowrap"
                             key={key}
                           >
                             {key}: {quotes[key]}

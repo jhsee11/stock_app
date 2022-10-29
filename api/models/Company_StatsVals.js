@@ -1,4 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
+  Schema = mongoose.Schema;
+const Company_QuoteTables = require('../models/Company_QuoteTables');
 
 /*
 { "_id" : ObjectId("6346c57f4515a9561a22fa09"), "ticker" : "AAPL", "Attribute" : "Market Cap (intraday)", "Recent" : "2.23T" }
@@ -27,6 +29,10 @@ const StatsValSchema = new mongoose.Schema({
   'Price/Book (mrq)': { type: Number },
   'Enterprise Value/Revenue': { type: Number },
   'Enterprise Value/EBITDA': { type: Number },
+  _mapping: {
+    type: Schema.ObjectId,
+    ref: 'Company_QuoteTables',
+  },
 });
 
 module.exports = mongoose.model('Company_StatsVals', StatsValSchema);
