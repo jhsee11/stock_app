@@ -129,6 +129,19 @@ router.post('/wacc', async (req, res) => {
   }
 });
 
+router.get('/retrieve_cashflow/:ticker', async (req, res) => {
+  try {
+    const targetTicker = req.params.ticker;
+    console.log('going to retrieve cash flow for ' + targetTicker);
+
+    let cashflowStatementsList = await Company_CashFlowStatements.find({
+      ticker: targetTicker,
+    });
+
+    res.status(200).json(cashflowStatementsList);
+  } catch (err) {}
+});
+
 // GET Target Stock Auto Populate
 router.get('/auto_populate/:ticker', async (req, res) => {
   try {

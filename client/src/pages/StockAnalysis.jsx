@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import LineChart from '../components/LineChart';
 import axios from 'axios';
 import { Input, Select, Option } from '@material-tailwind/react';
+import moment from 'moment';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  solid,
+  regular,
+  brands,
+  icon,
+} from '@fortawesome/fontawesome-svg-core/import.macro'; // <-- import styles to be used
 
 const StockAnalysis = () => {
   const [options, setOptions] = useState([]);
@@ -125,15 +133,6 @@ const StockAnalysis = () => {
     newFilterList[index] = newObj;
     setFilterList(newFilterList);
     console.log(JSON.stringify(filterList));
-
-    {
-      /*
-    let newFilterList = { ...filterList };
-    //newFilterList[index][dropDown.filter] = event.target.value;
-    newFilterList[index]['operator'] = dropDown['operator'];
-    setFilterList(newFilterList);
-    console.log(filterList); */
-    }
   };
 
   const handleSelectChange = (event) => {
@@ -146,6 +145,11 @@ const StockAnalysis = () => {
     console.log('new object');
     console.log(newObj);
     setDropdown(newObj);
+
+    // set the intrinsic ticker
+    let newObj2 = { ...intrinsic };
+    newObj['ticker'] = value;
+    setIntrinsic(newObj2);
   };
 
   const handleRemoveItem = (index) => {
@@ -170,7 +174,13 @@ const StockAnalysis = () => {
   const handleChange = (e) => {
     let newObj = { ...intrinsic };
     console.log(e.target.name);
-    newObj[e.target.name] = parseFloat(e.target.value);
+
+    if (e.target.name != 'ticker') {
+      newObj[e.target.name] = parseFloat(e.target.value);
+    } else {
+      newObj[e.target.name] = e.target.value;
+    }
+
     console.log(newObj);
     setIntrinsic(newObj);
   };
@@ -190,6 +200,29 @@ const StockAnalysis = () => {
         setIntrinsic(res.data);
 
         console.log(`final is ${JSON.stringify(intrinsic)}`);
+      });
+  };
+
+  const [cashFlowList, setCashFlowList] = useState([]);
+
+  const handleDelete = (index, e) => {
+    setCashFlowList(cashFlowList.filter((v, i) => i !== index));
+  };
+
+  const handleRetrieveCashFlow = (e) => {
+    e.preventDefault();
+    console.log(`Retrieving cash flow report for ${intrinsic.ticker}`);
+
+    //retrieve_cashflow
+    axios
+      .get(
+        `http://localhost:5001/api/stock_analysis//retrieve_cashflow/${intrinsic.ticker}`
+      )
+      .then((res) => {
+        console.log(`cash flow report is ${JSON.stringify(res.data)}`);
+        //totalCashFromOperatingActivities
+        //capitalExpenditures
+        setCashFlowList(res.data);
       });
   };
 
@@ -271,26 +304,6 @@ const StockAnalysis = () => {
         },
       ]
     */
-
-    {
-      /*[
-  {
-    "attribute": "Trailing P/E",
-    "value": "123",
-    "operator": "Greater Than"
-  },
-  {
-    "attribute": "Price/Sales",
-    "value": "567",
-    "operator": "Smaller Than"
-  },
-  {
-    "attribute": "Forward P/E",
-    "value": "56",
-    "operator": "Smaller Than"
-  }
-]*/
-    }
   };
   {
     /* <div className="relative right-80 ml-20 mr-20 mx-auto">*/
@@ -732,6 +745,116 @@ const StockAnalysis = () => {
               placeholder="based on US 10 years treasury bills"
             />
           </div>
+          <div className="">
+            <h1>Retrieve Free Cash Flow Report</h1>
+            <input
+              onClick={handleRetrieveCashFlow}
+              className="ml-4 md:mt-4 md:ml-2 w-maxs text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+              type="button"
+              value="Retrieve Cash Flow Report"
+            />
+          </div>
+
+          <div>
+            <table className="table-fixed">
+              {cashFlowList.map((cashFlow, index) => {
+                cashFlow['freeCashFlow'] = '';
+                cashFlow['YoY Change %'] = '';
+
+                return (
+                  <>
+                    <thead>
+                      {index == 0 && (
+                        <tr>
+                          {Object.keys(cashFlow)
+                            .filter(
+                              (key) =>
+                                key == 'ticker' ||
+                                key == 'totalCashFromOperatingActivities' ||
+                                key == 'capitalExpenditures' ||
+                                key == 'endDate' ||
+                                key == 'freeCashFlow' ||
+                                key == 'YoY Change %'
+                            )
+                            .map((cashFlowElement, index_1) => {
+                              return (
+                                <th className="w-80 border border-deep-orange-200 p-2 whitespace-nowrap">
+                                  {cashFlowElement}
+                                </th>
+                              );
+                            })}
+                        </tr>
+                      )}
+                    </thead>
+                  </>
+                );
+              })}
+              <tbody>
+                {cashFlowList.map((cashFlow, index) => {
+                  cashFlow['freeCashFlow'] =
+                    cashFlow['totalCashFromOperatingActivities'] +
+                    cashFlow['capitalExpenditures'];
+
+                  if (index < cashFlowList.length - 1) {
+                    cashFlow['YoY Change %'] =
+                      ((cashFlow['freeCashFlow'] -
+                        (cashFlowList[index + 1][
+                          'totalCashFromOperatingActivities'
+                        ] +
+                          cashFlowList[index + 1]['capitalExpenditures'])) /
+                        (cashFlowList[index + 1][
+                          'totalCashFromOperatingActivities'
+                        ] +
+                          cashFlowList[index + 1]['capitalExpenditures'])) *
+                      100;
+
+                    cashFlow['YoY Change %'] =
+                      cashFlow['YoY Change %'].toFixed(2);
+                  } else {
+                    cashFlow['YoY Change %'] = 'NA';
+                  }
+
+                  return (
+                    <>
+                      <tr key={index}>
+                        {Object.keys(cashFlow)
+                          .filter(
+                            (key) =>
+                              key == 'ticker' ||
+                              key == 'totalCashFromOperatingActivities' ||
+                              key == 'capitalExpenditures' ||
+                              key == 'endDate' ||
+                              key == 'freeCashFlow' ||
+                              key == 'YoY Change %'
+                          )
+                          .map((cashFlowElement, index_1) => {
+                            if (cashFlowElement == 'endDate') {
+                              cashFlow[cashFlowElement] = moment(
+                                new Date(cashFlow[cashFlowElement])
+                              ).format('DD MMM YYYY');
+                            }
+
+                            return (
+                              <>
+                                <td className="w-80 text-center border border-deep-orange-700 p-2 whitespace-nowrap">
+                                  {cashFlow[cashFlowElement]}
+                                </td>
+                              </>
+                            );
+                          })}
+                        <td>
+                          <button onClick={(e) => handleDelete(index, e)}>
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    </>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
           <button
             className="ml-4 mb-4 md:mt-4 md:ml-2 w-40 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
             type="submit"
