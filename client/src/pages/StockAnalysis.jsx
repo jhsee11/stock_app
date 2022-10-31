@@ -3,13 +3,13 @@ import LineChart from '../components/LineChart';
 import axios from 'axios';
 import { Input, Select, Option } from '@material-tailwind/react';
 import moment from 'moment';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  solid,
-  regular,
-  brands,
-  icon,
-} from '@fortawesome/fontawesome-svg-core/import.macro'; // <-- import styles to be used
+  faEnvelope,
+  faTrash,
+  faDeleteLeft,
+} from '@fortawesome/free-solid-svg-icons';
 
 const StockAnalysis = () => {
   const [options, setOptions] = useState([]);
@@ -35,6 +35,14 @@ const StockAnalysis = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (inputList.length > 0) {
+      inputList[inputList.length - 1].input === ''
+        ? setIsDisabled(true)
+        : setIsDisabled(false);
+    }
+  });
+
   const [targetStock, setTargetStock] = useState({
     // need to fetch the data from mongo db
     // labels: retrieveStock.map((data) => data.index.getDate()),
@@ -56,50 +64,25 @@ const StockAnalysis = () => {
     },
   ]);
 
-  const [value, setValue] = useState(null);
   const [screenedStock, setScreenedStock] = useState([]);
-
   const [isDisabled, setIsDisabled] = useState(false);
 
-  const [optionList, setOptionList] = useState([
+  const optionList = [
     'PEG Ratio (5 yr expected)',
     'Trailing P/E',
     'Forward P/E',
     'Price/Sales',
     'Price/Book',
-  ]);
+  ];
 
-  const [operatorList, setOperatorList] = useState([
-    'Greater Than',
-    'Less Than',
-    'Equal',
-  ]);
+  const operatorList = ['Greater Than', 'Less Than', 'Equal'];
 
   const [dropDown, setDropdown] = useState({
     filter: optionList[0],
     operator: operatorList[0],
   });
+
   const [filterList, setFilterList] = useState([]);
-  const [filter, setFilter] = useState();
-
-  {
-    /*
-  const handleFilterChange = (e) => {
-    let newObj = { ...filter };
-    console.log(e.target.name);
-    newObj[e.target.name] = e.target.value;
-    console.log(newObj);
-    setFilter(newObj);
-  }; */
-  }
-
-  useEffect(() => {
-    if (inputList.length > 0) {
-      inputList[inputList.length - 1].input === ''
-        ? setIsDisabled(true)
-        : setIsDisabled(false);
-    }
-  });
 
   const handleListAdd = () => {
     setInputList([
@@ -147,9 +130,9 @@ const StockAnalysis = () => {
     setDropdown(newObj);
 
     // set the intrinsic ticker
-    let newObj2 = { ...intrinsic };
-    newObj['ticker'] = value;
-    setIntrinsic(newObj2);
+    // let newObj2 = { ...intrinsic };
+    // newObj['ticker'] = value;
+    // setIntrinsic(newObj2);
   };
 
   const handleRemoveItem = (index) => {
@@ -157,7 +140,6 @@ const StockAnalysis = () => {
     newList.splice(index, 1);
     setInputList(newList);
 
-    // arr.splice(i, 1);
     filterList.splice(index, 1);
   };
 
@@ -169,7 +151,7 @@ const StockAnalysis = () => {
 
   const [intrinsic, setIntrinsic] = useState({});
   const [autoPopulate, setAutoPopulate] = useState({});
-  const [wacc, setWacc] = useState();
+  //const [wacc, setWacc] = useState();
 
   const handleChange = (e) => {
     let newObj = { ...intrinsic };
@@ -183,6 +165,8 @@ const StockAnalysis = () => {
 
     console.log(newObj);
     setIntrinsic(newObj);
+    // have to update autoPolulate
+    // setAutoPopulate(newObj);
   };
 
   const handleAutoPopulate = (e) => {
@@ -195,10 +179,9 @@ const StockAnalysis = () => {
       .then((res) => {
         console.log('returned intrinsic value');
         console.log(res.data);
-        setAutoPopulate(res.data);
+        //setAutoPopulate(res.data);
         //need to set the intrinsic object
         setIntrinsic(res.data);
-
         console.log(`final is ${JSON.stringify(intrinsic)}`);
       });
   };
@@ -207,6 +190,44 @@ const StockAnalysis = () => {
 
   const handleDelete = (index, e) => {
     setCashFlowList(cashFlowList.filter((v, i) => i !== index));
+  };
+
+  const [avgFreeCashFlow, setAvgFreeCashFlow] = useState();
+
+  const handleCalculateAvgCashFlow = (e) => {
+    e.preventDefault();
+
+    console.log('calculating average cash flow from report');
+
+    let avgFreeCashFlow = 0;
+    let count = 0;
+
+    //cashFlow
+
+    for (let i = 0; i < cashFlowList.length; i++) {
+      let obj = cashFlowList[i];
+
+      avgFreeCashFlow =
+        avgFreeCashFlow +
+        obj.totalCashFromOperatingActivities +
+        obj.capitalExpenditures;
+      count = count + 1;
+
+      console.log(`count is ${count},avg free cash flow is ${avgFreeCashFlow}`);
+    }
+
+    console.log(
+      `zzz avg free cash flow is ${JSON.stringify(avgFreeCashFlow / count)}`
+    );
+
+    setAvgFreeCashFlow((avgFreeCashFlow / count).toFixed(2));
+
+    let newObj = { ...intrinsic };
+    newObj['avgFreeCashFlow'] = parseFloat(
+      (avgFreeCashFlow / count).toFixed(2)
+    );
+    console.log(newObj);
+    setIntrinsic(newObj);
   };
 
   const handleRetrieveCashFlow = (e) => {
@@ -258,7 +279,7 @@ const StockAnalysis = () => {
         let newObj = { ...intrinsic };
         newObj['wacc'] = parseFloat(res.data);
         setIntrinsic(newObj);
-        setWacc(res.data);
+        //setWacc(res.data);
       });
   };
 
@@ -292,27 +313,30 @@ const StockAnalysis = () => {
         console.log(res.data);
         setScreenedStock(res.data);
       });
-
-    /* 
-    [
-        { ticker: targetTicker },
-        {
-          index: {
-            $gte: startDate,
-            $lte: endDate,
-          },
-        },
-      ]
-    */
   };
-  {
-    /* <div className="relative right-80 ml-20 mr-20 mx-auto">*/
-  }
+
+  const editField = (name, value, index) => {
+    console.log('trigger edit');
+    console.log(`value is ${value}, name is ${name}`);
+    // Clone students data before mutation
+    let clonedCashFlowList = cashFlowList.map((item) => ({ ...item }));
+
+    if (
+      name == 'totalCashFromOperatingActivities' ||
+      name == 'capitalExpenditures'
+    ) {
+      value = parseFloat(value);
+    }
+
+    clonedCashFlowList[index][name] = value;
+    console.log(`clone cash flow is ${JSON.stringify(clonedCashFlowList)}`);
+    setCashFlowList(clonedCashFlowList);
+  };
+
   return (
-    <div className="w-full ml-20 mr-20 mx-auto overflow-auto  md:overflow-auto ">
-      {/*<LineChart chartData={targetStock} />*/}
+    <div className="w-full ml-24 mr-20 mx-auto overflow-auto  md:overflow-auto ">
       <div className="overflow-auto md:overflow-auto">
-        <h1 className="underline underline-offset-4 mb-2">
+        <h1 className="font-bold text-lg underline underline-offset-4">
           Stock Screener Attributes
         </h1>
         {inputList.length > 0
@@ -377,16 +401,10 @@ const StockAnalysis = () => {
           Submit
         </button>
 
-        <div className="m-10">
+        <div className="mt-10">
           <table className="overflow-auto table-fixed border-spacing-2 border border-black">
             <thead>
               <tr>
-                {/*
-              <div>
-                {Object.keys(screenedStock[0]).map((key) => {
-                  return <th className="border border-black">test</th>;
-                })}
-              </div>*/}
                 {screenedStock.map((stock, index) => {
                   const displayHeader = [
                     'Avg. Volume',
@@ -478,9 +496,11 @@ const StockAnalysis = () => {
           </table>
         </div>
       </div>
-      <div className="mt-10">
-        <h1>Intrinsic Value Calculation</h1>
-        <p className="mt-2 font-bold">
+      <div className="mt-6">
+        <h1 className="font-bold text-lg underline underline-offset-4 ">
+          Intrinsic Value Calculation
+        </h1>
+        <p className="mt-4 font-bold">
           WACC = (E/V x Re) + (D/V x Rd x (1 - Tc)
         </p>
         <p className="mt-2 ml-2 italic">
@@ -498,9 +518,16 @@ const StockAnalysis = () => {
           Cost of Debt = Interest Expense / Total Debt
         </p>
         <p className="mt-2 ml-2 italic">Tc = corporate tax rate</p>
-        <form onSubmit={handleCalculateWACC} className="mt-4 w-full max-w-lg">
-          <div className="mb-6">
-            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+
+        <form
+          onSubmit={handleCalculateWACC}
+          className="mt-8 w-full max-w-[360px] border border-gray-500 pt-4 pb-4 px-8 p-2"
+        >
+          <h1 className="font-bold italic underline underline-offset-4">
+            Calculate WACC
+          </h1>
+          <div className="mt-6 mb-6">
+            <div className="w-[240px] px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="grid-first-name"
@@ -508,7 +535,7 @@ const StockAnalysis = () => {
                 Ticker
               </label>
               <select
-                className="mt-8 appearance-none block w-full bg-gray-200 text-gray-700 borderrounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white  focus:border-red-500 "
+                className="mt-4 rounded appearance-none block w-full bg-gray-200 text-gray-700 borderrounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white  focus:border-red-500 "
                 name="ticker"
                 onChange={handleChange}
               >
@@ -518,26 +545,15 @@ const StockAnalysis = () => {
                   </option>
                 ))}
               </select>
-              {/*}
               <input
-                onChange={handleChange}
-                name="ticker"
-                className="mt-8 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                id="grid-first-name"
-                type="text"
-                placeholder="Jane"
-              />*/}
+                onClick={handleAutoPopulate}
+                className="md:mt-2 md:ml-2 w-max text-white bg-green-1 font-bold uppercase text-xs px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mb-1"
+                type="button"
+                value="Auto Populate data"
+              />
             </div>
 
-            <h1>Calculate WACC</h1>
-            <input
-              onClick={handleAutoPopulate}
-              className="ml-4 md:mt-4 md:ml-2 w-maxs text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-              type="button"
-              value="Auto Populate"
-            />
-
-            <div className="mt-8 w-full md:w-1/2 px-3">
+            <div className="mt-6 w-[240px] px-3">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="grid-last-name"
@@ -547,14 +563,14 @@ const StockAnalysis = () => {
               <input
                 onChange={handleChange}
                 name="interestExpense"
-                value={autoPopulate.interestExpense || ''}
+                value={intrinsic.interestExpense || ''}
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
                 placeholder="Get from income statement interest expense "
               />
             </div>
-            <div className="mt-8 w-full md:w-1/2 px-3">
+            <div className="mt-4 w-[240px] px-3">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="grid-last-name"
@@ -565,14 +581,14 @@ const StockAnalysis = () => {
               <input
                 onChange={handleChange}
                 name="totalDebt"
-                value={autoPopulate.totalDebt || ''}
+                value={intrinsic.totalDebt || ''}
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
                 placeholder="Get from Balance Sheet totalLiab"
               />
             </div>
-            <div className="mt-8 w-full md:w-1/2 px-3">
+            <div className="mt-4 w-[240px] px-3">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="grid-last-name"
@@ -583,14 +599,14 @@ const StockAnalysis = () => {
               <input
                 onChange={handleChange}
                 name="taxRate"
-                value={autoPopulate.taxRate || ''}
+                value={intrinsic.taxRate || ''}
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
                 placeholder="incomeTaxExpense/incomeBeforeTax"
               />
             </div>
-            <div className="mt-8 w-full md:w-1/2 px-3">
+            <div className="mt-4 w-[240px]  px-3">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="grid-last-name"
@@ -601,14 +617,14 @@ const StockAnalysis = () => {
               <input
                 onChange={handleChange}
                 name="beta"
-                value={autoPopulate.beta || ''}
+                value={intrinsic.beta || ''}
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
                 placeholder="Beta"
               />
             </div>
-            <div className="mt-8 w-full md:w-1/2 px-3">
+            <div className="mt-4 w-[240px]  px-3">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="grid-last-name"
@@ -622,10 +638,10 @@ const StockAnalysis = () => {
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
-                placeholder="based on US 10 years treasury bills"
+                placeholder="risk free rate"
               />
             </div>
-            <div className="mt-8 w-full md:w-1/2 px-3">
+            <div className="mt-4 w-[240px] px-3">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="grid-last-name"
@@ -639,10 +655,10 @@ const StockAnalysis = () => {
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
-                placeholder="based on user"
+                placeholder="market return rate"
               />
             </div>
-            <div className="mt-8 w-full md:w-1/2 px-3">
+            <div className="mt-4 w-[240px] px-3">
               <label
                 className=" block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="grid-last-name"
@@ -656,10 +672,10 @@ const StockAnalysis = () => {
                 className=" appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
-                placeholder="Required User Input"
+                placeholder="market cap"
               />
             </div>
-            <div className="mt-8 w-full md:w-1/2 px-3">
+            <div className="mt-4 w-[240px] px-3">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="grid-last-name"
@@ -673,38 +689,39 @@ const StockAnalysis = () => {
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
-                placeholder="Required User Input"
+                placeholder="outstanding shares"
               />
             </div>
-          </div>
-          <div className="mt-8 -mx-3 mb-6">
-            <div className="w-full px-3">
-              <label
-                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                htmlFor="grid-password"
-              >
-                WACC
-              </label>
-              <div className="bg-gray-300 w-60 h-10 p-2 px-4">
-                {intrinsic.wacc}
-              </div>
 
-              <p className="text-gray-600 text-xs italic">
-                Calculated WACC value
-              </p>
+            <div className="mt-8 mb-6">
+              <div className=" px-3">
+                <label
+                  className="block ml-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-password"
+                >
+                  WACC
+                </label>
+                <div className="w-[180px] pt-2 ml-2 rounded block uppercase tracking-wide text-gray-700 first-line:font-bold mb-2 h-10 bg-gray-50 px-3">
+                  {intrinsic.wacc}
+                </div>
+
+                <p className="mt-2 text-gray-600 text-xs italic">
+                  Calculated WACC value
+                </p>
+              </div>
+              <button
+                className="ml-4 md:mt-6 md:ml-2 w-40 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                type="submit"
+              >
+                Calculate WACC
+              </button>
             </div>
           </div>
-          <button
-            className="ml-4 md:mt-4 md:ml-2 w-40 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-            type="submit"
-          >
-            Calculate WACC
-          </button>
         </form>
 
         <form
           onSubmit={handleCalculateIntrinsic}
-          className="mt-4 w-full max-w-lg"
+          className=" mt-4 w-full max-w-lg"
         >
           <p className="mt-8 ml-4 font-bold">
             Terminal Value : V0 = FCFE x (1+g) / (r-g)
@@ -724,7 +741,7 @@ const StockAnalysis = () => {
               id="grid-last-name"
               type="number"
               step="0.01"
-              placeholder="based on US 10 years treasury bills"
+              placeholder="5 years growth rate"
             />
           </div>
           <div className="mt-8 mb-8 w-full md:w-1/2 px-3">
@@ -742,24 +759,50 @@ const StockAnalysis = () => {
               id="grid-last-name"
               type="number"
               step="0.01"
-              placeholder="based on US 10 years treasury bills"
+              placeholder="perpetual growth rate"
+            />
+          </div>
+          <div className="mt-8 mb-8 w-full md:w-1/2 px-3">
+            <label
+              className=" block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              htmlFor="grid-last-name"
+            >
+              Free Cash Flow used for Projection (%)
+            </label>
+            <div></div>
+
+            <input
+              onChange={handleChange}
+              value={avgFreeCashFlow}
+              name="avgFreeCashFlow"
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              id="grid-last-name"
+              type="number"
+              step="0.01"
+              placeholder="free cash flow"
+            />
+            <input
+              onClick={handleCalculateAvgCashFlow}
+              className="whitespace-pre-wrap md:mt-8 w-48 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1"
+              type="button"
+              value="Use Avg CashFlow"
             />
           </div>
           <div className="">
-            <h1>Retrieve Free Cash Flow Report</h1>
-            <input
+            <button
               onClick={handleRetrieveCashFlow}
-              className="ml-4 md:mt-4 md:ml-2 w-maxs text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+              className="whitespace-pre-wrap ml-4 md:ml-2 w-48 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
               type="button"
-              value="Retrieve Cash Flow Report"
-            />
+            >
+              Retrieve <br /> Cash Flow Report
+            </button>
           </div>
 
           <div>
-            <table className="table-fixed">
+            <table className="table-fixed mt-4">
               {cashFlowList.map((cashFlow, index) => {
-                cashFlow['freeCashFlow'] = '';
-                cashFlow['YoY Change %'] = '';
+                cashFlow['freeCashFlow'] = 0;
+                cashFlow['YoY Change %'] = 0;
 
                 return (
                   <>
@@ -837,14 +880,28 @@ const StockAnalysis = () => {
                             return (
                               <>
                                 <td className="w-80 text-center border border-deep-orange-700 p-2 whitespace-nowrap">
-                                  {cashFlow[cashFlowElement]}
+                                  <input
+                                    onChange={(e) =>
+                                      editField(
+                                        e.target.name,
+                                        e.target.value,
+                                        index
+                                      )
+                                    }
+                                    className="bg-yellow-2"
+                                    name={cashFlowElement}
+                                    value={cashFlow[cashFlowElement] || ''}
+                                  />
                                 </td>
                               </>
                             );
                           })}
                         <td>
-                          <button onClick={(e) => handleDelete(index, e)}>
-                            Delete
+                          <button
+                            className="ml-2 text-lg"
+                            onClick={(e) => handleDelete(index, e)}
+                          >
+                            <FontAwesomeIcon icon={faDeleteLeft} />
                           </button>
                         </td>
                       </tr>
@@ -856,14 +913,15 @@ const StockAnalysis = () => {
           </div>
 
           <button
-            className="ml-4 mb-4 md:mt-4 md:ml-2 w-40 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+            className="ml-4 md:mt-8 md:ml-2 w-48 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
             type="submit"
           >
-            Calculate Intrinsic Value
+            Calculate <br />
+            Intrinsic Value
           </button>
         </form>
-        <div className="mt-8 -mx-3 mb-6">
-          <div className="w-full px-3">
+        <div className="mt-6 -mx-3 mb-8">
+          <div className="w-full ml-4 px-3">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               htmlFor="grid-password"

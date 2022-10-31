@@ -17,33 +17,15 @@ router.post('/intrinsic', async (req, res) => {
       wacc,
       perpetualGrowthRate,
       outstandingShares,
+      avgFreeCashFlow,
     } = req.body;
 
     console.log(`req body is ${JSON.stringify(req.body)}`);
     let targetTicker = req.body.ticker;
 
+    let freeCashFlow = avgFreeCashFlow;
+
     // calculate terminal value
-    let cashFlowList = await Company_CashFlowStatements.find({
-      ticker: targetTicker,
-    });
-
-    console.log(`cash flow is ${JSON.stringify(cashFlowList[0])}`);
-
-    // project the next 5 years cash flow using the latest year free cash flow
-    let freeCashFlow =
-      cashFlowList[0].totalCashFromOperatingActivities +
-      cashFlowList[0].capitalExpenditures;
-
-    console.log(`Free cash flow  is ${freeCashFlow}`);
-
-    {
-      /*
-    let terminalValue =
-      (freeCashFlow *
-        Math.pow(1 + predictGrowthRate / 100, 4) *
-        (1 + perpetualGrowthRate / 100)) /
-      ((wacc - perpetualGrowthRate) / 100); */
-    }
 
     let terminalValue =
       (freeCashFlow *
@@ -129,6 +111,7 @@ router.post('/wacc', async (req, res) => {
   }
 });
 
+// retrieve cash flow for particular ticker
 router.get('/retrieve_cashflow/:ticker', async (req, res) => {
   try {
     const targetTicker = req.params.ticker;
@@ -198,7 +181,7 @@ router.get('/auto_populate/:ticker', async (req, res) => {
   } catch (err) {}
 });
 
-// GET Target Stock Analysis
+// Return Target Stock Analysis
 router.post('/ticker', async (req, res) => {
   try {
     console.log('retrieve TARGET stock analysis');
@@ -225,8 +208,6 @@ router.post('/ticker', async (req, res) => {
         let displayTickers = await Company_QuoteTables.find({
           $or: listofTicker,
         });
-
-        console.log('hello');
 
         console.log(`display ticker is ${displayTickers}`);
         console.log(`diplay ticker type is ${typeof displayTickers}`);
@@ -255,16 +236,6 @@ router.post('/ticker', async (req, res) => {
       console.log(err);
       res.status(500).json(err);
     }
-
-    // Trailing P/E - 22.97
-    // Forward P/E - 21.93
-    // PEG Ratio (5 yr expected) - 2.49
-    // Price/Sales (ttm) - 5.90
-    // Price/Book (mrq) - 38.44
-    // Market Cap
-    // [ {'Trailing P/E' : { $gt: 89} },  { 'PEG Ratio' : { $lt: 89} } ]
-
-    console.log('end');
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
