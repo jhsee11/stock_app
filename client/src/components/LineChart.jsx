@@ -6,8 +6,8 @@ function LineChart({ chartData }) {
   return (
     <Line
       data={chartData}
-      height={300}
-      width={800}
+      height="350px"
+      width="700px"
       options={{
         scales: {
           yAxis: {

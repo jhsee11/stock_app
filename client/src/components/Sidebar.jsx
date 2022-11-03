@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { SiShopware } from 'react-icons/si';
 import { MdOutlineCancel } from 'react-icons/md';
-
 import { useStateContext } from '../contexts/ContextProvider';
-
 import { links } from '../data/dummy';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAnchor } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   const activeLink =
@@ -33,7 +33,7 @@ const Sidebar = () => {
               onClick={handleCloseSideBar}
               className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900"
             >
-              <SiShopware />
+              <FontAwesomeIcon icon={faAnchor} />
               <span>Stock Analysis App</span>
             </Link>
 

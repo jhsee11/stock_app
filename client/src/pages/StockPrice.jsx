@@ -57,10 +57,14 @@ const StockPrice = () => {
       });
   }, []);
 
+  const [display, setDisplay] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     console.log(`Stock is ${JSON.stringify(stock)}`);
+
+    setDisplay(true);
 
     axios
       .post(`http://localhost:5001/api/stock_price/ticker`, stock)
@@ -163,14 +167,18 @@ const StockPrice = () => {
   });
 
   return (
-    <div className="w-full ml-10 mr-10 mx-auto overflow-auto md:overflow-auto">
+    <div className="w-full ml-24 mr-10 mx-auto overflow-auto md:overflow-auto">
       <div className="w-full md:flex ">
         <form
           onSubmit={handleSubmit}
-          className="mb-8 mt-8 md:ml-8 flex items-center md:block md:w-40 w-[600px]  bg-green-2 shadow-md rounded px-4 py-3 h-max "
+          className="mb-8 mt-8 flex items-center md:block md:w-40 w-[640px] bg-green-2 shadow-md rounded px-4 py-6 h-max "
         >
-          <div className="ml-4">
-            <select name="ticker" onChange={handleChange}>
+          <div className="flex justify-center">
+            <select
+              className="w-24 p-0.5"
+              name="ticker"
+              onChange={handleChange}
+            >
               {options.map((ticker) => (
                 <option key={ticker} value={ticker}>
                   {ticker}
@@ -179,33 +187,34 @@ const StockPrice = () => {
             </select>
           </div>
 
-          <label className="ml-4 md:mt-4 block text-gray-200 text-sm font-bold mb-1">
+          <label className="ml-6 mr-4 md:ml-0 md:mr-0 flex justify-center md:mt-4 block text-gray-200 text-sm font-bold mb-1">
             StartDate
           </label>
-          <DatePicker
-            portalId="root-portal"
-            popperClassName="date-picker-reports"
-            className="ml-4 md:ml-2 text-center w-24 rounded py-1 px-1 mb-2 text-black z-0"
-            dateFormatCalendar="yyyy"
-            selected={stock.startDate}
-            name="date"
-            onChange={(newDate) => {
-              setStock({ ...stock, startDate: newDate });
-            }}
-            peekNextMonth
-            showMonthDropdown
-            showYearDropdown
-            dropdownMode="select"
-          />
+          <div className="">
+            <DatePicker
+              portalId="root-portal"
+              popperClassName="date-picker-reports"
+              className="mt-2 md:mt-0 text-center w-24 rounded py-1 px-1 mb-2 text-black z-0"
+              dateFormatCalendar="yyyy"
+              selected={stock.startDate}
+              name="date"
+              onChange={(newDate) => {
+                setStock({ ...stock, startDate: newDate });
+              }}
+              peekNextMonth
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+            />
+          </div>
 
-          <label className="ml-4 md:mt-2 block text-gray-200 text-sm font-bold mb-1">
+          <label className="ml-4 md:ml-0 md:mr-0 flex justify-center md:mt-2 block text-gray-200 text-sm font-bold mb-1">
             EndDate
           </label>
-          <div></div>
 
           <DatePicker
             style={{ 'z-index': -100 }}
-            className="ml-4 md:ml-2 text-center w-24 rounded py-1 px-1 mb-2 text-black z-0"
+            className="mt-2 md:mt-0 text-center w-24 rounded py-1 px-1 mb-2 text-black z-0"
             selected={stock.endDate}
             name="date"
             onChange={(newDate) => {
@@ -216,84 +225,91 @@ const StockPrice = () => {
             showYearDropdown
             dropdownMode="select"
           />
-          <button
-            className="ml-4 md:mt-4 md:ml-2 w-24 text-black bg-yellow-2 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-            type="submit"
-          >
-            Submit
-          </button>
+          <div className="ml-4 md:ml-0 flex justify-center">
+            <button
+              className="md:mt-4 w-24 text-black bg-yellow-2 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mb-1"
+              type="submit"
+            >
+              Submit
+            </button>
+          </div>
         </form>
 
-        {/*}
-        <div className=" md:overflow-auto md:ml-12 md:mr-20"> */}
-        <div className="md:ml-12 md:mr-20">
-          {/*<BarChart chartData={userData} />
-             <LineChart chartData={userData} />*/}
+        <div className="md:ml-24 md:mr-20">
           <LineChart chartData={targetStock} />
-          <div className="mt-8 ml-4 md:flex md:overflow-auto">
-            <div className="w-72">
-              <h1 className="text-green-1 text-xl mb-2 underline underline-offset-4">
-                Stats
-              </h1>
-              {showStats && (
-                <div>
-                  {statsVal.map((stats) => {
-                    return (
-                      <div className="grid grid-rows-9 grid-flow-row gap-2 border-gray-500">
-                        {Object.keys(stats)
-                          .filter((key) => key != 'ticker' && key != '_id')
-                          .map((key) => {
-                            return (
-                              <div className="py-1">
-                                <li
-                                  className="text-sm md:text-md whitespace-nowrap "
-                                  key={key}
-                                  value={stats.Recent}
-                                >
-                                  {key} - {stats[key]}
-                                </li>
-                              </div>
-                            );
-                          })}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+          {!display && (
+            <div className="mt-24 flex justify-center italic text-lg">
+              Click Submit to see more info
             </div>
-
-            <div className="mt-8 md:mt-0 md:ml-16">
-              <h1 className="text-green-1 text-xl mb-2 underline underline-offset-4">
-                Quotes
-              </h1>
-              {showQuotes && (
-                <div className="grid grid-rows-20 md:grid-rows-9 grid-flow-col gap-x-8 gap-2 border-gray-500 ">
-                  {Object.keys(quotes)
-                    .filter((key) => key != 'ticker' && key != '_id')
-                    .map((key) => {
+          )}
+          {display && (
+            <div className="mt-8 ml-4 md:flex md:overflow-auto">
+              <div className="w-72">
+                <h1 className="text-green-1 text-xl mb-2 underline underline-offset-4">
+                  Stats
+                </h1>
+                {showStats && (
+                  <div>
+                    {statsVal.map((stats) => {
                       return (
-                        <div className="py-1" key={key}>
-                          <li
-                            className="text-sm md:text-md whitespace-nowrap"
-                            key={key}
-                          >
-                            {key}: {quotes[key]}
-                          </li>
-                          <hr />
+                        <div className="grid grid-rows-9 grid-flow-row gap-2 border-gray-500">
+                          {Object.keys(stats)
+                            .filter((key) => key != 'ticker' && key != '_id')
+                            .map((key) => {
+                              return (
+                                <div className="py-1">
+                                  <li
+                                    className="text-sm md:text-md whitespace-nowrap "
+                                    key={key}
+                                    value={stats.Recent}
+                                  >
+                                    {key} - {stats[key]}
+                                  </li>
+                                </div>
+                              );
+                            })}
                         </div>
                       );
                     })}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-8 md:mt-0 md:ml-16">
+                <h1 className="text-green-1 text-xl mb-2 underline underline-offset-4">
+                  Quotes
+                </h1>
+                {showQuotes && (
+                  <div className="grid grid-rows-20 md:grid-rows-9 grid-flow-col gap-x-8 gap-2 border-gray-500 ">
+                    {Object.keys(quotes)
+                      .filter((key) => key != 'ticker' && key != '_id')
+                      .map((key) => {
+                        return (
+                          <div className="py-1" key={key}>
+                            <li
+                              className="text-sm md:text-md whitespace-nowrap"
+                              key={key}
+                            >
+                              {key}: {quotes[key]}
+                            </li>
+                            <hr />
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="mt-16 mb-32 ">
-            <StockInfoTab
-              incomeStatements={incomeStatements}
-              balanceSheets={balanceSheets}
-              cashflowStatements={cashflowStatements}
-            />
-          </div>
+          )}
+          {display && (
+            <div className="mt-12 mb-32">
+              <StockInfoTab
+                incomeStatements={incomeStatements}
+                balanceSheets={balanceSheets}
+                cashflowStatements={cashflowStatements}
+              />
+            </div>
+          )}
         </div>
 
         <div>{/*<PieChart chartData={userData} />*/}</div>

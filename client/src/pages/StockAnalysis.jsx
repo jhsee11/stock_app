@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Input, Select, Option } from '@material-tailwind/react';
 import moment from 'moment';
 
+import FinanceTable from '../components/FinanceTable';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faEnvelope,
@@ -60,7 +62,9 @@ const StockAnalysis = () => {
   const [inputList, setInputList] = useState([
     {
       input: '',
+      input2: '',
       input_rank: null,
+      displayVal2: false,
     },
   ]);
 
@@ -71,11 +75,13 @@ const StockAnalysis = () => {
     'PEG Ratio (5 yr expected)',
     'Trailing P/E',
     'Forward P/E',
-    'Price/Sales',
-    'Price/Book',
+    'Price/Sales (ttm)',
+    'Price/Book (mrq)',
+    'Enterprise Value/Revenue',
+    'Enterprise Value/EBITDA',
   ];
 
-  const operatorList = ['Greater Than', 'Less Than', 'Equal'];
+  const operatorList = ['Greater Than', 'Less Than', 'Equal', 'Between'];
 
   const [dropDown, setDropdown] = useState({
     filter: optionList[0],
@@ -100,7 +106,12 @@ const StockAnalysis = () => {
     console.log(dropDown);
 
     const newInputList = [...inputList];
-    newInputList[index].input = value;
+    if (name == 'input1') {
+      console.log('setting input1');
+      newInputList[index].input = value;
+    } else {
+      newInputList[index].input2 = value;
+    }
     newInputList[index].input_rank = index + 1;
     setInputList(newInputList);
 
@@ -108,7 +119,10 @@ const StockAnalysis = () => {
     let newObj = {};
     //newObj[dropDown.filter] = event.target.value;
     newObj['attribute'] = dropDown.filter;
-    newObj['value'] = event.target.value;
+    newObj['value'] = newInputList[index].input;
+    newObj['value2'] = newInputList[index].input2;
+    console.log(`value 1 is ${newObj['value']}`);
+    console.log(`value 2 is ${newObj['value2']}`);
     newObj['operator'] = dropDown['operator'];
 
     // push the filter to filter list
@@ -118,21 +132,32 @@ const StockAnalysis = () => {
     console.log(JSON.stringify(filterList));
   };
 
-  const handleSelectChange = (event) => {
+  const handleSelectChange = (event, index) => {
     const { value, name } = event.target;
     console.log(`handling Select, value is ${value}, name is ${name}`);
 
     // add the new filter
     let newObj = { ...dropDown };
     newObj[name] = value;
-    console.log('new object');
     console.log(newObj);
     setDropdown(newObj);
-
-    // set the intrinsic ticker
-    // let newObj2 = { ...intrinsic };
-    // newObj['ticker'] = value;
-    // setIntrinsic(newObj2);
+    // need to display the second column value if it is equal to between
+    if (value == 'Between') {
+      const newInputList = [...inputList];
+      newInputList[index].displayVal2 = true;
+      setInputList(newInputList);
+    } else {
+      const newInputList = [...inputList];
+      newInputList[index].displayVal2 = false;
+      setInputList(newInputList);
+      // have to remove the DropDown and reset ?
+      // need to change filter list wor
+      let newFilterList = [...filterList];
+      newFilterList[index]['operator'] = value;
+      delete newFilterList[index]['value2'];
+      setFilterList(newFilterList);
+      console.log(JSON.stringify(filterList));
+    }
   };
 
   const handleRemoveItem = (index) => {
@@ -147,11 +172,11 @@ const StockAnalysis = () => {
     'Greater Than': '$gt',
     'Less Than': '$lt',
     Equal: '$eq',
+    Between: ['$gt', '$lt'],
   };
 
   const [intrinsic, setIntrinsic] = useState({});
   const [autoPopulate, setAutoPopulate] = useState({});
-  //const [wacc, setWacc] = useState();
 
   const handleChange = (e) => {
     let newObj = { ...intrinsic };
@@ -165,8 +190,6 @@ const StockAnalysis = () => {
 
     console.log(newObj);
     setIntrinsic(newObj);
-    // have to update autoPolulate
-    // setAutoPopulate(newObj);
   };
 
   const handleAutoPopulate = (e) => {
@@ -179,8 +202,6 @@ const StockAnalysis = () => {
       .then((res) => {
         console.log('returned intrinsic value');
         console.log(res.data);
-        //setAutoPopulate(res.data);
-        //need to set the intrinsic object
         setIntrinsic(res.data);
         console.log(`final is ${JSON.stringify(intrinsic)}`);
       });
@@ -297,10 +318,19 @@ const StockAnalysis = () => {
         let symbol = symbolMapping[filterList[i]['operator']];
         console.log(symbol);
 
-        newObj[filterList[i]['attribute']] = {
-          $gt: parseInt(filterList[i]['value']),
-        };
+        if (filterList[i][property] == 'Between') {
+          newObj[filterList[i]['attribute']] = {
+            [symbol[0]]: parseInt(filterList[i]['value']),
+            [symbol[1]]: parseInt(filterList[i]['value2']),
+          };
+        } else {
+          newObj[filterList[i]['attribute']] = {
+            [symbol]: parseInt(filterList[i]['value']),
+          };
+        }
       }
+
+      console.log(newObj);
       // add into analysis list
       analysisList.push(newObj);
       console.log(JSON.stringify(analysisList));
@@ -347,7 +377,7 @@ const StockAnalysis = () => {
               >
                 <select
                   name="filter"
-                  onChange={(event) => handleSelectChange(event)}
+                  onChange={(event) => handleSelectChange(event, index)}
                   className="w-max-content p-2.5 text-gray-500 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
                 >
                   {optionList.map((option, index) => (
@@ -357,7 +387,7 @@ const StockAnalysis = () => {
 
                 <select
                   name="operator"
-                  onChange={(event) => handleSelectChange(event)}
+                  onChange={(event) => handleSelectChange(event, index)}
                   className="ml-4 w-max-content p-2.5 text-gray-500 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
                 >
                   {operatorList.map((operator, index) => (
@@ -366,7 +396,7 @@ const StockAnalysis = () => {
                 </select>
 
                 <input
-                  name="this is input"
+                  name="input1"
                   className="ml-4 border rounded-md p-2.5"
                   id="outlined-basic"
                   label={`test`}
@@ -375,6 +405,19 @@ const StockAnalysis = () => {
                     handleInputChange(event, index, dropDown)
                   }
                 />
+
+                {input.displayVal2 && (
+                  <input
+                    name="input2"
+                    className="ml-4 border rounded-md p-2.5"
+                    id="outlined-basic"
+                    label={`test`}
+                    variant="outlined"
+                    onChange={(event) =>
+                      handleInputChange(event, index, dropDown)
+                    }
+                  />
+                )}
                 <button
                   className="ml-4"
                   onClick={() => handleRemoveItem(index)}
@@ -496,7 +539,8 @@ const StockAnalysis = () => {
           </table>
         </div>
       </div>
-      <div className="mt-6">
+      <hr className="my-2 border border-gray-500" />
+      <div className="mt-8">
         <h1 className="font-bold text-lg underline underline-offset-4 ">
           Intrinsic Value Calculation
         </h1>

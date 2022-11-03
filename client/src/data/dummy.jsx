@@ -1,29 +1,10 @@
 import React from 'react';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  AiOutlineCalendar,
-  AiOutlineShoppingCart,
-  AiOutlineAreaChart,
-  AiOutlineBarChart,
-  AiOutlineStock,
-} from 'react-icons/ai';
-import {
-  FiShoppingBag,
-  FiEdit,
-  FiPieChart,
-  FiBarChart,
-  FiCreditCard,
-  FiStar,
-  FiShoppingCart,
-} from 'react-icons/fi';
-import {
-  BsKanban,
-  BsBarChart,
-  BsBoxSeam,
-  BsCurrencyDollar,
-  BsShield,
-  BsChatLeft,
-} from 'react-icons/bs';
+  faChartSimple,
+  faCoins,
+  faAnchor,
+} from '@fortawesome/free-solid-svg-icons';
 import { BiColorFill } from 'react-icons/bi';
 import { IoMdContacts } from 'react-icons/io';
 import { RiContactsLine, RiStockLine } from 'react-icons/ri';
@@ -39,15 +20,11 @@ export const links = [
     links: [
       {
         name: 'StockPrice',
-        icon: 'icon',
+        icon: <FontAwesomeIcon icon={faCoins} />,
       },
       {
         name: 'StockAnalysis',
-        icon: 'icon',
-      },
-      {
-        name: 'customers',
-        icon: 'icon',
+        icon: <FontAwesomeIcon icon={faChartSimple} />,
       },
     ],
   },
