@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LineChart from '../components/LineChart';
 import axios from 'axios';
-import { Input, Select, Option } from '@material-tailwind/react';
+import { Input, Select, Option, Tooltip } from '@material-tailwind/react';
 import moment from 'moment';
 
 import FinanceTable from '../components/FinanceTable';
@@ -373,7 +373,7 @@ const StockAnalysis = () => {
           ? inputList.map((input, index) => (
               <div
                 key={index}
-                className="relative flex mt-4 w-full lg:max-w-sm"
+                className="relative flex mt-6 w-full lg:max-w-sm"
               >
                 <select
                   name="filter"
@@ -430,14 +430,14 @@ const StockAnalysis = () => {
             ))
           : 'No item in the list '}
         <button
-          className="block text-center mt-8 bg-blue-gray-50 w-28 p-2 "
+          className="block rounded text-center mt-8 text-yellow-2 bg-green-1 w-28 p-2 "
           onClick={handleListAdd}
           disabled={isDisabled}
         >
           Add Filter
         </button>
         <button
-          className="block text-center mt-8 bg-blue-gray-50 w-28 p-2"
+          className="block rounded text-center mt-8 text-yellow-2 bg-green-1  w-28 p-2"
           onClick={handleSubmit}
           disabled={isDisabled}
         >
@@ -541,11 +541,13 @@ const StockAnalysis = () => {
       </div>
       <hr className="my-2 border border-gray-500" />
       <div className="mt-8">
-        <h1 className="font-bold text-lg underline underline-offset-4 ">
-          Intrinsic Value Calculation
+        <h1 className="font-bold text-xl underline underline-offset-4 ">
+          Intrinsic Value Calculation (DCF Approach)
         </h1>
-        <p className="mt-4 font-bold">
-          WACC = (E/V x Re) + (D/V x Rd x (1 - Tc)
+
+        <p className="mt-6 font-bold">
+          WACC (Weight Average Cost of Capital ) = (E/V x Re) + (D/V x Rd x (1 -
+          Tc)
         </p>
         <p className="mt-2 ml-2 italic">
           E = market value of the firm's equity
@@ -565,7 +567,7 @@ const StockAnalysis = () => {
 
         <form
           onSubmit={handleCalculateWACC}
-          className="mt-8 w-full max-w-[360px] border border-gray-500 pt-4 pb-4 px-8 p-2"
+          className="mt-8 ml-4 w-full max-w-[360px] border border-green-1 pt-4 pb-4 px-8 p-2"
         >
           <h1 className="font-bold italic underline underline-offset-4">
             Calculate WACC
@@ -589,12 +591,12 @@ const StockAnalysis = () => {
                   </option>
                 ))}
               </select>
-              <input
+              <button
                 onClick={handleAutoPopulate}
-                className="md:mt-2 md:ml-2 w-max text-white bg-green-1 font-bold uppercase text-xs px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mb-1"
-                type="button"
-                value="Auto Populate data"
-              />
+                className="md:mt-2 md:ml-2 w-max text-yellow-2 bg-green-1 font-bold uppercase text-xs px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mb-1"
+              >
+                Auto Populate data
+              </button>
             </div>
 
             <div className="mt-6 w-[240px] px-3">
@@ -604,15 +606,20 @@ const StockAnalysis = () => {
               >
                 Interest Expense
               </label>
-              <input
-                onChange={handleChange}
-                name="interestExpense"
-                value={intrinsic.interestExpense || ''}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="number"
-                placeholder="Get from income statement interest expense "
-              />
+              <Tooltip
+                content="Income Statement Interest Expense"
+                placement="right-end"
+              >
+                <input
+                  onChange={handleChange}
+                  name="interestExpense"
+                  value={intrinsic.interestExpense || ''}
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  id="grid-last-name"
+                  type="number"
+                  placeholder="Income Statement Interest Expense "
+                />
+              </Tooltip>
             </div>
             <div className="mt-4 w-[240px] px-3">
               <label
@@ -621,16 +628,20 @@ const StockAnalysis = () => {
               >
                 Total Debt
               </label>
-
-              <input
-                onChange={handleChange}
-                name="totalDebt"
-                value={intrinsic.totalDebt || ''}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="number"
-                placeholder="Get from Balance Sheet totalLiab"
-              />
+              <Tooltip
+                content="Balance Sheet Total Liabiability"
+                placement="right-end"
+              >
+                <input
+                  onChange={handleChange}
+                  name="totalDebt"
+                  value={intrinsic.totalDebt || ''}
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  id="grid-last-name"
+                  type="number"
+                  placeholder="Balance Sheet Total Liab"
+                />
+              </Tooltip>
             </div>
             <div className="mt-4 w-[240px] px-3">
               <label
@@ -639,16 +650,20 @@ const StockAnalysis = () => {
               >
                 Tax Rate (%)
               </label>
-
-              <input
-                onChange={handleChange}
-                name="taxRate"
-                value={intrinsic.taxRate || ''}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="number"
-                placeholder="incomeTaxExpense/incomeBeforeTax"
-              />
+              <Tooltip
+                content="IncomeTaxExpense/IncomeBeforeTax"
+                placement="right-end"
+              >
+                <input
+                  onChange={handleChange}
+                  name="taxRate"
+                  value={intrinsic.taxRate || ''}
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  id="grid-last-name"
+                  type="number"
+                  placeholder="IncomeTaxExpense/IncomeBeforeTax"
+                />
+              </Tooltip>
             </div>
             <div className="mt-4 w-[240px]  px-3">
               <label
@@ -657,16 +672,20 @@ const StockAnalysis = () => {
               >
                 Beta
               </label>
-
-              <input
-                onChange={handleChange}
-                name="beta"
-                value={intrinsic.beta || ''}
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-last-name"
-                type="number"
-                placeholder="Beta"
-              />
+              <Tooltip
+                content="Beta - Get from Financial Stats"
+                placement="right-end"
+              >
+                <input
+                  onChange={handleChange}
+                  name="beta"
+                  value={intrinsic.beta || ''}
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  id="grid-last-name"
+                  type="number"
+                  placeholder="Beta"
+                />
+              </Tooltip>
             </div>
             <div className="mt-4 w-[240px]  px-3">
               <label
@@ -682,7 +701,7 @@ const StockAnalysis = () => {
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
-                placeholder="risk free rate"
+                placeholder="Risk Free Rate"
               />
             </div>
             <div className="mt-4 w-[240px] px-3">
@@ -699,7 +718,7 @@ const StockAnalysis = () => {
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
-                placeholder="market return rate"
+                placeholder="Market Rate"
               />
             </div>
             <div className="mt-4 w-[240px] px-3">
@@ -716,7 +735,7 @@ const StockAnalysis = () => {
                 className=" appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
-                placeholder="market cap"
+                placeholder="Market Cap"
               />
             </div>
             <div className="mt-4 w-[240px] px-3">
@@ -733,19 +752,19 @@ const StockAnalysis = () => {
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
                 type="number"
-                placeholder="outstanding shares"
+                placeholder="Outstanding Shares"
               />
             </div>
 
             <div className="mt-8 mb-6">
               <div className=" px-3">
                 <label
-                  className="block ml-2 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-password"
                 >
                   WACC
                 </label>
-                <div className="w-[180px] pt-2 ml-2 rounded block uppercase tracking-wide text-gray-700 first-line:font-bold mb-2 h-10 bg-gray-50 px-3">
+                <div className="w-[180px] pt-2 rounded block uppercase tracking-wide text-gray-700 first-line:font-bold mb-2 h-10 bg-gray-50 px-3">
                   {intrinsic.wacc}
                 </div>
 
@@ -753,8 +772,9 @@ const StockAnalysis = () => {
                   Calculated WACC value
                 </p>
               </div>
+
               <button
-                className="ml-4 md:mt-6 md:ml-2 w-40 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                className="mt-8 md:mt-8 md:ml-4 w-max text-yellow-2 bg-green-1 font-bold uppercase text- px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mb-1"
                 type="submit"
               >
                 Calculate WACC
@@ -762,14 +782,17 @@ const StockAnalysis = () => {
             </div>
           </div>
         </form>
-
+        {/*mt-8 w-full max-w-[360px] border border-green-1 pt-4 pb-4 px-8 p-2 */}
+        {/*mt-4 w-full max-w-lg*/}
         <form
           onSubmit={handleCalculateIntrinsic}
-          className=" mt-4 w-full max-w-lg"
+          className="mt-4 w-full max-w-lg"
         >
+          {/*
           <p className="mt-8 ml-4 font-bold">
             Terminal Value : V0 = FCFE x (1+g) / (r-g)
           </p>
+          */}
           <div className="mt-8 mb-8 w-full md:w-1/2 px-3">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -803,7 +826,7 @@ const StockAnalysis = () => {
               id="grid-last-name"
               type="number"
               step="0.01"
-              placeholder="perpetual growth rate"
+              placeholder="Perpetual Growth Rate"
             />
           </div>
           <div className="mt-8 mb-8 w-full md:w-1/2 px-3">
@@ -823,19 +846,19 @@ const StockAnalysis = () => {
               id="grid-last-name"
               type="number"
               step="0.01"
-              placeholder="free cash flow"
+              placeholder="Free Cash Flow"
             />
-            <input
+            <button
               onClick={handleCalculateAvgCashFlow}
-              className="whitespace-pre-wrap md:mt-8 w-48 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1"
+              className="mt-8 whitespace-pre-wrap w-48 text-yellow-2 bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none"
               type="button"
-              value="Use Avg CashFlow"
-            />
-          </div>
-          <div className="">
+            >
+              Use Avg CashFlow
+            </button>
+
             <button
               onClick={handleRetrieveCashFlow}
-              className="whitespace-pre-wrap ml-4 md:ml-2 w-48 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+              className="mt-6 whitespace-pre-wrap w-48 text-yellow-2 bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none"
               type="button"
             >
               Retrieve <br /> Cash Flow Report
@@ -843,7 +866,7 @@ const StockAnalysis = () => {
           </div>
 
           <div>
-            <table className="table-fixed mt-4">
+            <table className="table-fixed mt-4 ml-4">
               {cashFlowList.map((cashFlow, index) => {
                 cashFlow['freeCashFlow'] = 0;
                 cashFlow['YoY Change %'] = 0;
@@ -865,7 +888,7 @@ const StockAnalysis = () => {
                             )
                             .map((cashFlowElement, index_1) => {
                               return (
-                                <th className="w-80 border border-deep-orange-200 p-2 whitespace-nowrap">
+                                <th className="w-80 border border-green-1 p-2 whitespace-nowrap">
                                   {cashFlowElement}
                                 </th>
                               );
@@ -923,7 +946,7 @@ const StockAnalysis = () => {
 
                             return (
                               <>
-                                <td className="w-80 text-center border border-deep-orange-700 p-2 whitespace-nowrap">
+                                <td className="w-80 text-center border border-green-1 p-2 whitespace-nowrap">
                                   <input
                                     onChange={(e) =>
                                       editField(
@@ -956,31 +979,31 @@ const StockAnalysis = () => {
             </table>
           </div>
 
-          <button
-            className="ml-4 md:mt-8 md:ml-2 w-48 text-white bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-            type="submit"
-          >
-            Calculate <br />
-            Intrinsic Value
-          </button>
-        </form>
-        <div className="mt-6 -mx-3 mb-8">
-          <div className="w-full ml-4 px-3">
+          <div className="w-full mt-12 px-2">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               htmlFor="grid-password"
             >
               Intrinsic Value
             </label>
-            <div className="bg-gray-300 w-60 h-10 p-2 px-4">
+            <div className="rounded bg-white w-48 h-12 p-2 px-4">
               {intrinsic.intrinsicValue}
             </div>
 
-            <p className="text-gray-600 text-xs italic">
-              Calculated WACC value
+            <p className="mt-2 text-gray-600 text-xs italic">
+              Calculated Intrinsic value
             </p>
+
+            <button
+              className="md:mt-8 w-48 text-yellow-2 bg-green-1 font-bold uppercase text-sm px-3 py-2 rounded hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+              type="submit"
+            >
+              Calculate <br />
+              Intrinsic Value
+            </button>
           </div>
-        </div>
+        </form>
+        <div className="mt-6 -mx-3 mb-8"></div>
       </div>
     </div>
   );

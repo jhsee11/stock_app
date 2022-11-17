@@ -41,7 +41,7 @@ const App = () => {
             <div className="fixed bg-green-1 navbar w-full z-50">
               <Navbar />
             </div>
-            <div className="flex mt-28 justify-center items-center bg-yellow-2 w-full">
+            <div className="flex mt-32 justify-center items-center bg-yellow-2 w-full">
               <Routes>
                 {/*Dashboard */}
                 <Route path="/" element={<StockPrice />} />

@@ -167,7 +167,7 @@ const StockPrice = () => {
   });
 
   return (
-    <div className="w-full ml-24 mr-10 mx-auto overflow-auto md:overflow-auto">
+    <div className="w-full ml-32 mr-10 mx-auto overflow-auto md:overflow-auto">
       <div className="w-full md:flex ">
         <form
           onSubmit={handleSubmit}

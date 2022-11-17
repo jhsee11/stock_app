@@ -34,7 +34,7 @@ const Sidebar = () => {
               className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900"
             >
               <FontAwesomeIcon icon={faAnchor} />
-              <span>Stock Analysis App</span>
+              <span className="">Stock Analysis App</span>
             </Link>
 
             <button
