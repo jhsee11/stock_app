@@ -43,7 +43,6 @@ const App = () => {
             </div>
             <div className="flex mt-32 justify-center items-center bg-yellow-2 w-full">
               <Routes>
-                {/*Dashboard */}
                 <Route path="/" element={<StockPrice />} />
                 <Route path="/StockPrice" element={<StockPrice />} />
                 <Route path="/StockAnalysis" element={<StockAnalysis />} />

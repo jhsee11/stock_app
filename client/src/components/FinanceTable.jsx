@@ -5,7 +5,7 @@ const FinanceTable = ({ FinanceData }) => {
   return (
     <div className="flex overflow-auto">
       {FinanceData.map((dataSheet, index) => {
-        console.log(`hahah index is ${index}`);
+        console.log(`index is ${index}`);
         let display = false;
         if (index == 0) {
           console.log('setting display');
@@ -39,7 +39,7 @@ const FinanceTable = ({ FinanceData }) => {
 
                     if (index_1 === 0) {
                       header = true;
-                      console.log(`come come index is ${dataSheetElement}`);
+                      console.log(`index is ${dataSheetElement}`);
                       dataSheet[dataSheetElement] = moment(
                         new Date(dataSheet[dataSheetElement])
                       ).format('DD MMM YYYY'); // June 1, 2019

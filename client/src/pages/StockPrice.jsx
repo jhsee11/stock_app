@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import BarChart from '../components/BarChart';
 import LineChart from '../components/LineChart';
-import PieChart from '../components/PieChart';
-import { UserData } from '../data/chartData';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -13,13 +10,11 @@ import StockInfoTab from '../components/Tab';
 
 const StockPrice = () => {
   const [options, setOptions] = useState([]);
-  const [retrieveStock, setRetrieveStock] = useState([]);
   const [statsVal, setStatsVal] = useState([]);
   const [quotes, setQuotes] = useState({});
   const [incomeStatements, setIncomeStatements] = useState([]);
   const [balanceSheets, setBalanceSheets] = useState([]);
   const [cashflowStatements, setCashflowStatements] = useState([]);
-  const [openTab, setOpenTab] = useState(1);
   const [showStats, setShowStats] = useState(false);
   const [showQuotes, setShowQuotes] = useState(false);
 
@@ -30,8 +25,6 @@ const StockPrice = () => {
   });
 
   const [targetStock, setTargetStock] = useState({
-    // need to fetch the data from mongo db
-    // labels: retrieveStock.map((data) => data.index.getDate()),
     labels: '',
     datasets: [
       {
@@ -153,19 +146,6 @@ const StockPrice = () => {
     setStock(newObj);
   };
 
-  const [userData, setUserData] = useState({
-    // need to fetch the data from mongo db
-    labels: UserData.map((data) => data.year),
-    datasets: [
-      {
-        label: 'Users Gained',
-        data: UserData.map((data) => data.userGain),
-        borderColor: 'black',
-        borderWidth: 2,
-      },
-    ],
-  });
-
   return (
     <div className="w-full ml-32 mr-10 mx-auto overflow-auto md:overflow-auto">
       <div className="w-full md:flex ">
@@ -252,7 +232,7 @@ const StockPrice = () => {
                   <div>
                     {statsVal.map((stats) => {
                       return (
-                        <div className="grid grid-rows-9 grid-flow-row gap-2 border-gray-500">
+                        <div className="grid grid-rows-9 grid-flow-col gap-2 border-gray-500">
                           {Object.keys(stats)
                             .filter((key) => key != 'ticker' && key != '_id')
                             .map((key) => {
@@ -311,8 +291,6 @@ const StockPrice = () => {
             </div>
           )}
         </div>
-
-        <div>{/*<PieChart chartData={userData} />*/}</div>
       </div>
     </div>
   );

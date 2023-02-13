@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import moment from 'moment';
-//import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-//import 'react-tabs/style/react-tabs.css';
+
 import FinanceTable from './FinanceTable';
 
 import {

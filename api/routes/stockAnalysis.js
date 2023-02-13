@@ -57,7 +57,7 @@ router.post('/intrinsic', async (req, res) => {
   }
 });
 
-//Calculate WACC for the stock
+//Calculate WACC for the stock - weighted average cost of capital
 router.post('/wacc', async (req, res) => {
   try {
     console.log(req.body);
@@ -80,15 +80,17 @@ router.post('/wacc', async (req, res) => {
     }
 
     // perform logic to calculate intrinsic value
-    // let totalValue = marketCap + totalDebt
-    // WACC  = (E/V x Re) + (D/V x Rd x (1 - Tc)
-    // Cost of Equity = Risk-Free Rate of Return + Beta × (Market Rate of Return – Risk-Free Rate of Return)
+    //   let totalValue = marketCap + totalDebt
+    //   WACC  = (E/V x Re) + (D/V x Rd x (1 - Tc)
+    //   Cost of Equity = Risk-Free Rate of Return + Beta × (Market Rate of Return – Risk-Free Rate of Return)
 
-    // let wacc = marketCap/totalValue * (riskFreeRate/100 + beta * (marketReturnRate/100 - riskFreeRate)) + (totalDebt/totalValue) * (interestExpense/totalDebt) * (1 - taxRate/100)
+    //   let wacc = marketCap/totalValue * (riskFreeRate/100 + beta * (marketReturnRate/100 - riskFreeRate)) + (totalDebt/totalValue) * (interestExpense/totalDebt) * (1 - taxRate/100)
 
     let totalValue = marketCap + totalDebt;
+
     console.log(`total value is ${totalValue}`);
     console.log(`equity weight = ${marketCap / totalValue}`);
+
     let equityPart =
       (marketCap / totalValue) *
       (riskFreeRate / 100 +
@@ -181,7 +183,7 @@ router.get('/auto_populate/:ticker', async (req, res) => {
   } catch (err) {}
 });
 
-// Return Target Stock Analysis
+// Return Target Stock Analysis for filter
 router.post('/ticker', async (req, res) => {
   try {
     console.log('retrieve TARGET stock analysis');
@@ -193,36 +195,39 @@ router.post('/ticker', async (req, res) => {
     //{'Trailing P/E' : {"$gt" : 50} }
 
     try {
-      let filterTickers = await Company_StatsVals.find({
+      let statsValTickers = await Company_StatsVals.find({
         $and: request,
       });
-      console.log(`filter tickers is is  ${JSON.stringify(filterTickers)}`);
+      console.log(`filter tickers is is  ${JSON.stringify(statsValTickers)}`);
       const listofTicker = [];
-      filterTickers.map((targetTicker) => {
+
+      statsValTickers.map((targetTicker) => {
         listofTicker.push({ ticker: targetTicker.ticker });
       });
       console.log(listofTicker);
       // find all stocks with the returned ticker
 
       if (listofTicker.length > 0) {
-        let displayTickers = await Company_QuoteTables.find({
+        let quoteTickers = await Company_QuoteTables.find({
           $or: listofTicker,
         });
 
-        console.log(`display ticker is ${displayTickers}`);
-        console.log(`diplay ticker type is ${typeof displayTickers}`);
-        console.log(Array.isArray(displayTickers));
-        console.log(`filter ticker is ${JSON.stringify(filterTickers)}`);
-        console.log(`filter ticker type is ${typeof filterTickers}`);
-        console.log(Array.isArray(filterTickers));
+        console.log(`display ticker is ${quoteTickers}`);
+        console.log(`diplay ticker type is ${typeof quoteTickers}`);
+        console.log(Array.isArray(quoteTickers));
+        console.log(`filter ticker is ${JSON.stringify(statsValTickers)}`);
+        console.log(`filter ticker type is ${typeof statsValTickers}`);
+        console.log(Array.isArray(statsValTickers));
 
-        let parsed_displayTickers = JSON.parse(JSON.stringify(displayTickers));
-        let parsed_filterTickers = JSON.parse(JSON.stringify(filterTickers));
+        let parsed_quoteTickers = JSON.parse(JSON.stringify(quoteTickers));
+        let parsed_statsValTickers = JSON.parse(
+          JSON.stringify(statsValTickers)
+        );
 
-        let combined = await parsed_displayTickers.map((x) =>
+        let combined = await parsed_quoteTickers.map((x) =>
           Object.assign(
             x,
-            parsed_filterTickers.find((y) => y['ticker'] == x.ticker)
+            parsed_statsValTickers.find((y) => y['ticker'] == x.ticker)
           )
         );
 
