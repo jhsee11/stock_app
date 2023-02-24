@@ -7,8 +7,8 @@ import yahoo_fin.stock_info as si
 from datetime import datetime
 
 print(si.tickers_sp500())
-snp500 = si.tickers_sp500()
-
+#snp500 = si.tickers_sp500()
+snp500 = ['AAPL','GOOGL','MSFT']
 
 # dd/mm/YY H:M:S
 dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
